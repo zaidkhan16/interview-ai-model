@@ -1,0 +1,333 @@
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Outfit', 'Plus Jakarta Sans', var(--font-sans);
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Default Dark Mode (Cosmic Nebula) */
+  --bg-base: #080911;
+  --bg-surface: rgba(16, 18, 30, 0.78);
+  --bg-surface-elevated: rgba(24, 27, 46, 0.92);
+  --bg-input: rgba(12, 14, 24, 0.85);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(168, 85, 247, 0.65);
+  --border-glow: rgba(168, 85, 247, 0.35);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --accent-primary: #a855f7;
+  --accent-secondary: #6366f1;
+  --accent-tertiary: #38bdf8;
+  --accent-glow: rgba(168, 85, 247, 0.4);
+
+  --gradient-brand: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #38bdf8 100%);
+  --gradient-btn: linear-gradient(135deg, #9333ea 0%, #6366f1 100%);
+
+  --aurora-1-color: rgba(168, 85, 247, 0.45);
+  --aurora-2-color: rgba(99, 102, 241, 0.35);
+  --aurora-3-color: rgba(56, 189, 248, 0.22);
+
+  --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-btn: 0 8px 24px -4px rgba(168, 85, 247, 0.5);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ==========================================================================
+   Light Mode Base Overrides
+   ========================================================================== */
+.mode-light {
+  --bg-base: #f0f4f9;
+  --bg-surface: rgba(255, 255, 255, 0.9);
+  --bg-surface-elevated: #ffffff;
+  --bg-input: #f8fafc;
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-focus: rgba(99, 102, 241, 0.65);
+  --border-glow: rgba(99, 102, 241, 0.2);
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+
+  --shadow-card: 0 20px 45px -10px rgba(0, 0, 0, 0.07), 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+/* ==========================================================================
+   Coordinated Color Themes - DARK
+   ========================================================================== */
+
+/* 1. Cosmic Nebula */
+.palette-nebula.mode-dark {
+  --bg-base: #080911;
+  --bg-surface: rgba(16, 18, 32, 0.78);
+  --bg-surface-elevated: rgba(25, 28, 48, 0.9);
+  --bg-input: rgba(13, 15, 26, 0.85);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-focus: rgba(168, 85, 247, 0.7);
+  --border-glow: rgba(168, 85, 247, 0.35);
+  --accent-primary: #a855f7;
+  --accent-secondary: #6366f1;
+  --accent-tertiary: #ec4899;
+  --accent-glow: rgba(168, 85, 247, 0.45);
+  --gradient-brand: linear-gradient(135deg, #c084fc 0%, #818cf8 50%, #f472b6 100%);
+  --gradient-btn: linear-gradient(135deg, #9333ea 0%, #6366f1 100%);
+  --aurora-1-color: rgba(168, 85, 247, 0.45);
+  --aurora-2-color: rgba(99, 102, 241, 0.35);
+  --aurora-3-color: rgba(236, 72, 153, 0.25);
+  --shadow-btn: 0 8px 24px -4px rgba(168, 85, 247, 0.5);
+}
+
+/* 2. Cyber Cyan */
+.palette-cyan.mode-dark {
+  --bg-base: #040d1a;
+  --bg-surface: rgba(9, 23, 43, 0.78);
+  --bg-surface-elevated: rgba(15, 34, 64, 0.9);
+  --bg-input: rgba(6, 17, 33, 0.85);
+  --border-subtle: rgba(56, 189, 248, 0.12);
+  --border-focus: rgba(6, 182, 212, 0.7);
+  --border-glow: rgba(6, 182, 212, 0.35);
+  --accent-primary: #06b6d4;
+  --accent-secondary: #3b82f6;
+  --accent-tertiary: #10b981;
+  --accent-glow: rgba(6, 182, 212, 0.45);
+  --gradient-brand: linear-gradient(135deg, #22d3ee 0%, #38bdf8 50%, #60a5fa 100%);
+  --gradient-btn: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
+  --aurora-1-color: rgba(6, 182, 212, 0.45);
+  --aurora-2-color: rgba(37, 99, 235, 0.35);
+  --aurora-3-color: rgba(16, 185, 129, 0.2);
+  --shadow-btn: 0 8px 24px -4px rgba(6, 182, 212, 0.5);
+}
+
+/* 3. Emerald Matrix */
+.palette-emerald.mode-dark {
+  --bg-base: #04120c;
+  --bg-surface: rgba(8, 28, 19, 0.8);
+  --bg-surface-elevated: rgba(13, 43, 29, 0.9);
+  --bg-input: rgba(6, 21, 14, 0.85);
+  --border-subtle: rgba(16, 185, 129, 0.14);
+  --border-focus: rgba(16, 185, 129, 0.7);
+  --border-glow: rgba(16, 185, 129, 0.35);
+  --accent-primary: #10b981;
+  --accent-secondary: #14b8a6;
+  --accent-tertiary: #84cc16;
+  --accent-glow: rgba(16, 185, 129, 0.45);
+  --gradient-brand: linear-gradient(135deg, #34d399 0%, #2dd4bf 50%, #a3e635 100%);
+  --gradient-btn: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+  --aurora-1-color: rgba(16, 185, 129, 0.45);
+  --aurora-2-color: rgba(20, 184, 166, 0.35);
+  --aurora-3-color: rgba(132, 204, 22, 0.22);
+  --shadow-btn: 0 8px 24px -4px rgba(16, 185, 129, 0.5);
+}
+
+/* 4. Sunset Ember */
+.palette-sunset.mode-dark {
+  --bg-base: #12070a;
+  --bg-surface: rgba(28, 14, 19, 0.8);
+  --bg-surface-elevated: rgba(43, 20, 28, 0.9);
+  --bg-input: rgba(21, 10, 14, 0.85);
+  --border-subtle: rgba(244, 63, 94, 0.14);
+  --border-focus: rgba(244, 63, 94, 0.7);
+  --border-glow: rgba(244, 63, 94, 0.35);
+  --accent-primary: #f43f5e;
+  --accent-secondary: #f97316;
+  --accent-tertiary: #fbbf24;
+  --accent-glow: rgba(244, 63, 94, 0.45);
+  --gradient-brand: linear-gradient(135deg, #fb7185 0%, #fb923c 50%, #fcd34d 100%);
+  --gradient-btn: linear-gradient(135deg, #e11d48 0%, #ea580c 100%);
+  --aurora-1-color: rgba(244, 63, 94, 0.45);
+  --aurora-2-color: rgba(249, 115, 22, 0.35);
+  --aurora-3-color: rgba(251, 191, 36, 0.22);
+  --shadow-btn: 0 8px 24px -4px rgba(244, 63, 94, 0.5);
+}
+
+/* 5. Platinum Dark */
+.palette-platinum.mode-dark {
+  --bg-base: #0f111a;
+  --bg-surface: rgba(22, 26, 40, 0.8);
+  --bg-surface-elevated: rgba(30, 36, 56, 0.9);
+  --bg-input: rgba(17, 20, 32, 0.85);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --accent-primary: #818cf8;
+  --accent-secondary: #38bdf8;
+  --accent-tertiary: #c084fc;
+  --gradient-brand: linear-gradient(135deg, #818cf8 0%, #38bdf8 100%);
+  --gradient-btn: linear-gradient(135deg, #4f46e5 0%, #0284c7 100%);
+  --shadow-btn: 0 8px 24px -4px rgba(129, 140, 248, 0.45);
+}
+
+/* ==========================================================================
+   Coordinated Color Themes - LIGHT
+   ========================================================================== */
+
+/* 1. Cosmic Nebula Light */
+.palette-nebula.mode-light {
+  --accent-primary: #7c3aed;
+  --accent-secondary: #4f46e5;
+  --accent-tertiary: #db2777;
+  --accent-glow: rgba(124, 58, 237, 0.3);
+  --border-focus: rgba(124, 58, 237, 0.6);
+  --gradient-brand: linear-gradient(135deg, #7c3aed 0%, #4f46e5 50%, #db2777 100%);
+  --gradient-btn: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+  --aurora-1-color: rgba(124, 58, 237, 0.15);
+  --aurora-2-color: rgba(79, 70, 229, 0.12);
+  --aurora-3-color: rgba(219, 39, 119, 0.08);
+  --shadow-btn: 0 8px 20px -4px rgba(124, 58, 237, 0.4);
+}
+
+/* 2. Cyber Cyan Light */
+.palette-cyan.mode-light {
+  --accent-primary: #0284c7;
+  --accent-secondary: #2563eb;
+  --accent-tertiary: #059669;
+  --accent-glow: rgba(2, 132, 199, 0.3);
+  --border-focus: rgba(2, 132, 199, 0.6);
+  --gradient-brand: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #059669 100%);
+  --gradient-btn: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  --aurora-1-color: rgba(2, 132, 199, 0.15);
+  --aurora-2-color: rgba(37, 99, 235, 0.12);
+  --aurora-3-color: rgba(5, 150, 105, 0.08);
+  --shadow-btn: 0 8px 20px -4px rgba(2, 132, 199, 0.4);
+}
+
+/* 3. Emerald Matrix Light */
+.palette-emerald.mode-light {
+  --accent-primary: #059669;
+  --accent-secondary: #0d9488;
+  --accent-tertiary: #65a30d;
+  --accent-glow: rgba(5, 150, 105, 0.3);
+  --border-focus: rgba(5, 150, 105, 0.6);
+  --gradient-brand: linear-gradient(135deg, #059669 0%, #0d9488 50%, #65a30d 100%);
+  --gradient-btn: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+  --aurora-1-color: rgba(5, 150, 105, 0.15);
+  --aurora-2-color: rgba(13, 148, 136, 0.12);
+  --aurora-3-color: rgba(101, 163, 13, 0.08);
+  --shadow-btn: 0 8px 20px -4px rgba(5, 150, 105, 0.4);
+}
+
+/* 4. Sunset Ember Light */
+.palette-sunset.mode-light {
+  --accent-primary: #e11d48;
+  --accent-secondary: #ea580c;
+  --accent-tertiary: #d97706;
+  --accent-glow: rgba(225, 29, 72, 0.3);
+  --border-focus: rgba(225, 29, 72, 0.6);
+  --gradient-brand: linear-gradient(135deg, #e11d48 0%, #ea580c 50%, #d97706 100%);
+  --gradient-btn: linear-gradient(135deg, #e11d48 0%, #ea580c 100%);
+  --aurora-1-color: rgba(225, 29, 72, 0.15);
+  --aurora-2-color: rgba(234, 88, 12, 0.12);
+  --aurora-3-color: rgba(217, 119, 6, 0.08);
+  --shadow-btn: 0 8px 20px -4px rgba(225, 29, 72, 0.4);
+}
+
+/* 5. Platinum Light */
+.palette-platinum.mode-light {
+  --accent-primary: #4f46e5;
+  --accent-secondary: #7c3aed;
+  --accent-tertiary: #0284c7;
+  --accent-glow: rgba(79, 70, 229, 0.3);
+  --border-focus: rgba(79, 70, 229, 0.6);
+  --gradient-brand: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #0284c7 100%);
+  --gradient-btn: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --aurora-1-color: rgba(79, 70, 229, 0.15);
+  --aurora-2-color: rgba(124, 58, 237, 0.12);
+  --aurora-3-color: rgba(2, 132, 199, 0.08);
+  --shadow-btn: 0 8px 20px -4px rgba(79, 70, 229, 0.4);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(150, 150, 150, 0.25);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.4);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.04); }
+}
+
+@keyframes waveBounce {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+.animate-scale-up {
+  animation: scaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+.animate-shake {
+  animation: shake 0.35s ease-in-out;
+}
