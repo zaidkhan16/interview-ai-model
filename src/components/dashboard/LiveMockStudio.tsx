@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import type { AIInterviewer } from '../../types/auth';
+import React, { useState, useEffect, useRef } from 'react';
+import type { AIInterviewer, MediaStreamState } from '../../types/auth';
 import confetti from 'canvas-confetti';
 import {
   Mic,
@@ -17,6 +17,9 @@ import {
 
 interface LiveMockStudioProps {
   onNotify: (title: string, desc?: string, type?: 'success' | 'info' | 'error') => void;
+  mediaState?: MediaStreamState;
+  onToggleCamera?: () => void;
+  onToggleMic?: () => void;
 }
 
 const INTERVIEWERS: AIInterviewer[] = [
@@ -49,11 +52,43 @@ const INTERVIEWERS: AIInterviewer[] = [
   },
 ];
 
-export const LiveMockStudio: React.FC<LiveMockStudioProps> = ({ onNotify }) => {
+export const LiveMockStudio: React.FC<LiveMockStudioProps> = ({
+  onNotify,
+  mediaState,
+  onToggleCamera,
+  onToggleMic,
+}) => {
   const [selectedInterviewer, setSelectedInterviewer] = useState<AIInterviewer>(INTERVIEWERS[0]);
   const [isSessionActive, setIsSessionActive] = useState<boolean>(false);
-  const [isMicMuted, setIsMicMuted] = useState<boolean>(false);
-  const [isVideoOn, setIsVideoOn] = useState<boolean>(true);
+  const [localMicMuted, setLocalMicMuted] = useState<boolean>(false);
+  const [localVideoOn, setLocalVideoOn] = useState<boolean>(true);
+  const candidateVideoRef = useRef<HTMLVideoElement | null>(null);
+
+  const isMicMuted = mediaState ? mediaState.isMicMuted : localMicMuted;
+  const isVideoOn = mediaState ? !mediaState.isCameraMuted && mediaState.hasCamera : localVideoOn;
+
+  // Bind candidate video stream
+  useEffect(() => {
+    if (candidateVideoRef.current && mediaState?.stream) {
+      candidateVideoRef.current.srcObject = mediaState.stream;
+    }
+  }, [mediaState?.stream, isVideoOn]);
+
+  const handleToggleMic = () => {
+    if (onToggleMic) {
+      onToggleMic();
+    } else {
+      setLocalMicMuted(!localMicMuted);
+    }
+  };
+
+  const handleToggleVideo = () => {
+    if (onToggleCamera) {
+      onToggleCamera();
+    } else {
+      setLocalVideoOn(!localVideoOn);
+    }
+  };
   const [userCode, setUserCode] = useState<string>(
 `// System Architecture Blueprint: Distributed Cache with Invalidation
 class DistributedCacheCluster {
@@ -193,20 +228,43 @@ class DistributedCacheCluster {
                 <div className="agent-stage-specialty">{selectedInterviewer.role} • {selectedInterviewer.specialty}</div>
               </div>
 
+              {/* Candidate Live PIP Video in Stage */}
+              {mediaState?.stream && mediaState.hasCamera && isVideoOn && (
+                <div className="stage-candidate-pip glass-panel animate-scale-up">
+                  <video
+                    ref={candidateVideoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="stage-candidate-video"
+                  />
+                  <div className="candidate-pip-badge">
+                    <span className="pip-dot pulsing"></span>
+                    <span>Candidate Live</span>
+                  </div>
+                </div>
+              )}
+
               {/* Live Audio Equalizer Wave */}
               <div className="stage-waveform-overlay">
                 <div className="stage-wave-bars">
                   {[35, 75, 45, 95, 60, 100, 80, 50, 90, 70, 40, 85, 98, 65, 75, 90, 55, 80, 60, 100, 45, 85, 40, 70].map(
-                    (val, idx) => (
-                      <div
-                        key={idx}
-                        className={`stage-wave-bar ${isSessionActive && !isMicMuted ? 'wave-active' : ''}`}
-                        style={{
-                          height: isSessionActive && !isMicMuted ? `${val}%` : '20%',
-                          animationDelay: `${idx * 0.06}s`,
-                        }}
-                      />
-                    )
+                    (val, idx) => {
+                      const userLevel = mediaState?.audioLevel || 0;
+                      const dynamicHeight = isSessionActive && !isMicMuted
+                        ? Math.max(15, Math.min(100, val * (userLevel > 5 ? (userLevel / 40) : 0.6)))
+                        : 20;
+                      return (
+                        <div
+                          key={idx}
+                          className={`stage-wave-bar ${isSessionActive && !isMicMuted ? 'wave-active' : ''}`}
+                          style={{
+                            height: `${dynamicHeight}%`,
+                            animationDelay: `${idx * 0.06}s`,
+                          }}
+                        />
+                      );
+                    }
                   )}
                 </div>
               </div>
@@ -216,7 +274,7 @@ class DistributedCacheCluster {
             <div className="studio-media-toolbar">
               <button
                 type="button"
-                onClick={() => setIsMicMuted(!isMicMuted)}
+                onClick={handleToggleMic}
                 className={`media-ctrl-btn ${isMicMuted ? 'muted' : 'active'}`}
                 title={isMicMuted ? 'Unmute Microphone' : 'Mute Microphone'}
               >
@@ -226,7 +284,7 @@ class DistributedCacheCluster {
 
               <button
                 type="button"
-                onClick={() => setIsVideoOn(!isVideoOn)}
+                onClick={handleToggleVideo}
                 className={`media-ctrl-btn ${isVideoOn ? 'active' : 'muted'}`}
                 title="Toggle WebCam"
               >

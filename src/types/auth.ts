@@ -118,3 +118,43 @@ export interface CompetencyScore {
   level: string;
   change: string;
 }
+
+export type MediaPermissionStatus = 'idle' | 'requesting' | 'granted' | 'denied' | 'error' | 'unavailable';
+
+export interface MediaStreamState {
+  stream: MediaStream | null;
+  hasCamera: boolean;
+  hasMic: boolean;
+  isCameraMuted: boolean;
+  isMicMuted: boolean;
+  audioLevel: number; // 0 - 100
+  permissionStatus: MediaPermissionStatus;
+  errorMessage: string | null;
+}
+
+export type ProctoringViolationType =
+  | 'TAB_SWITCH'
+  | 'WINDOW_BLUR'
+  | 'FULLSCREEN_EXIT'
+  | 'DEVTOOLS_SHORTCUT'
+  | 'CONTEXT_MENU'
+  | 'MOUSE_OUT_OF_BOUNDS';
+
+export interface ProctoringViolation {
+  id: string;
+  type: ProctoringViolationType;
+  title: string;
+  description: string;
+  timestamp: string;
+  severity: 'warning' | 'danger' | 'critical';
+}
+
+export interface ProctoringGuardState {
+  isProctoringActive: boolean;
+  isFullscreen: boolean;
+  violationCount: number;
+  maxViolations: number;
+  violations: ProctoringViolation[];
+  currentAlert: ProctoringViolation | null;
+  isAudioWarningEnabled: boolean;
+}

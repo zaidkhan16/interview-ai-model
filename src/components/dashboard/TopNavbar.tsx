@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { UserProfile, ColorPalette, ThemeMode } from '../../types/auth';
+import type { UserProfile, ColorPalette, ThemeMode, MediaStreamState, ProctoringGuardState } from '../../types/auth';
 import {
   Search,
   Bell,
@@ -12,6 +12,10 @@ import {
   User,
   CheckCircle2,
   X,
+  Shield,
+  ShieldAlert,
+  Camera,
+  Mic,
 } from 'lucide-react';
 
 interface TopNavbarProps {
@@ -23,6 +27,9 @@ interface TopNavbarProps {
   onSignOut: () => void;
   onCelebrate: () => void;
   onNotify: (title: string, desc?: string, type?: 'success' | 'info' | 'error') => void;
+  mediaState?: MediaStreamState;
+  guardState?: ProctoringGuardState;
+  onOpenAuditLog?: () => void;
 }
 
 const PALETTES: { id: ColorPalette; label: string; dotClass: string }[] = [
@@ -42,9 +49,15 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onSignOut,
   onCelebrate,
   onNotify,
+  mediaState,
+  guardState,
+  onOpenAuditLog,
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const violationCount = guardState?.violationCount || 0;
+  const isProctored = guardState?.isProctoringActive;
 
   return (
     <header className="dash-top-navbar glass-panel">
@@ -64,13 +77,47 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
         <span className="search-shortcut">⌘K</span>
       </div>
 
-      {/* Center: Live Neural Engine Status */}
-      <div className="navbar-engine-status">
-        <div className="engine-pulse-dot"></div>
-        <span className="engine-status-text">Nexus Voice AI v2.5</span>
-        <span className="engine-latency-tag">
-          <Activity size={12} /> 18ms Latency
-        </span>
+      {/* Center: Live Neural Engine Status & Proctoring Indicator */}
+      <div className="navbar-center-cluster">
+        <div className="navbar-engine-status">
+          <div className="engine-pulse-dot"></div>
+          <span className="engine-status-text">Nexus Voice AI v2.5</span>
+          <span className="engine-latency-tag">
+            <Activity size={12} /> 18ms Latency
+          </span>
+        </div>
+
+        {isProctored && (
+          <button
+            type="button"
+            onClick={onOpenAuditLog}
+            className={`navbar-proctoring-pill ${violationCount > 0 ? 'warning' : 'active'}`}
+            title="Click to view Anti-Cheat Proctoring Audit Log"
+          >
+            {violationCount > 0 ? (
+              <ShieldAlert size={13} className="text-danger animate-pulse" />
+            ) : (
+              <Shield size={13} className="text-emerald" />
+            )}
+            <span className="proctoring-pill-title">
+              {violationCount > 0 ? `${violationCount} Violations` : 'Tab Lock & Cam Active'}
+            </span>
+            <div className="proctor-device-dots">
+              <span
+                className={`device-dot ${mediaState?.hasCamera && !mediaState?.isCameraMuted ? 'on' : 'off'}`}
+                title={mediaState?.hasCamera ? 'Camera Streaming' : 'Camera Disabled'}
+              >
+                <Camera size={10} />
+              </span>
+              <span
+                className={`device-dot ${mediaState?.hasMic && !mediaState?.isMicMuted ? 'on' : 'off'}`}
+                title={mediaState?.hasMic ? 'Mic Streaming' : 'Mic Muted'}
+              >
+                <Mic size={10} />
+              </span>
+            </div>
+          </button>
+        )}
       </div>
 
       {/* Right Controls Cluster */}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { UserProfile, ColorPalette, ThemeMode, DashboardView, QuestionItem } from '../../types/auth';
+import type { UserProfile, ColorPalette, ThemeMode, DashboardView, QuestionItem, MediaStreamState, ProctoringGuardState } from '../../types/auth';
 import { Sidebar } from './Sidebar';
 import { TopNavbar } from './TopNavbar';
 import { OverviewView } from './OverviewView';
@@ -16,6 +16,11 @@ interface MainDashboardProps {
   onToggleMode: () => void;
   onSignOut: () => void;
   onNotify: (title: string, desc?: string, type?: 'success' | 'info' | 'error') => void;
+  mediaState?: MediaStreamState;
+  guardState?: ProctoringGuardState;
+  onToggleCamera?: () => void;
+  onToggleMic?: () => void;
+  onOpenAuditLog?: () => void;
 }
 
 export const MainDashboard: React.FC<MainDashboardProps> = ({
@@ -26,6 +31,11 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
   onToggleMode,
   onSignOut,
   onNotify,
+  mediaState,
+  guardState,
+  onToggleCamera,
+  onToggleMic,
+  onOpenAuditLog,
 }) => {
   const [activeView, setActiveView] = useState<DashboardView>('overview');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
@@ -71,6 +81,9 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
           onSignOut={onSignOut}
           onCelebrate={handleCelebrate}
           onNotify={onNotify}
+          mediaState={mediaState}
+          guardState={guardState}
+          onOpenAuditLog={onOpenAuditLog}
         />
 
         {/* View Viewport */}
@@ -85,7 +98,12 @@ export const MainDashboard: React.FC<MainDashboardProps> = ({
           )}
 
           {activeView === 'studio' && (
-            <LiveMockStudio onNotify={onNotify} />
+            <LiveMockStudio
+              onNotify={onNotify}
+              mediaState={mediaState}
+              onToggleCamera={onToggleCamera}
+              onToggleMic={onToggleMic}
+            />
           )}
 
           {activeView === 'questions' && (

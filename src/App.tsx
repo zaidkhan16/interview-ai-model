@@ -7,7 +7,13 @@ import { SignUpForm } from './components/SignUpForm';
 import { TwoFactorModal } from './components/TwoFactorModal';
 import { ForgotPasswordModal } from './components/ForgotPasswordModal';
 import { MainDashboard } from './components/dashboard/MainDashboard';
+import { ProctoringInitModal } from './components/proctoring/ProctoringInitModal';
+import { ProctoringFloatingHud } from './components/proctoring/ProctoringFloatingHud';
+import { ProctoringWarningModal } from './components/proctoring/ProctoringWarningModal';
+import { SecurityAuditModal } from './components/proctoring/SecurityAuditModal';
 import { Toast } from './components/Toast';
+import { useProctoringMedia } from './hooks/useProctoringMedia';
+import { useProctoringGuard } from './hooks/useProctoringGuard';
 import { LogIn, UserPlus, Palette, Sun, Moon, ShieldCheck } from 'lucide-react';
 import './App.css';
 
@@ -29,8 +35,20 @@ export function App() {
   const [is2FAOpen, setIs2FAOpen] = useState<boolean>(false);
   const [isForgotOpen, setIsForgotOpen] = useState<boolean>(false);
   const [pendingEmail, setPendingEmail] = useState<string>('');
+  const [isProctoringInitOpen, setIsProctoringInitOpen] = useState<boolean>(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState<boolean>(false);
+
   const toastCountRef = useRef(0);
   const cardRef = useRef<HTMLDivElement | null>(null);
+
+  // Hook 1: Real-time Camera, Voice & Web Audio VU Analysis
+  const {
+    mediaState,
+    requestMedia,
+    toggleCamera,
+    toggleMic,
+    stopMedia,
+  } = useProctoringMedia(false);
 
   const addToast = (title: string, description?: string, type: 'success' | 'error' | 'info' = 'info') => {
     toastCountRef.current += 1;
@@ -41,6 +59,25 @@ export function App() {
   const removeToast = (id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
+
+  // Hook 2: Anti-Cheat Proctoring, Tab Switch Restriction & Fullscreen Guard
+  const {
+    guardState,
+    requestFullscreen,
+    exitFullscreen,
+    dismissAlert,
+    resetViolations,
+  } = useProctoringGuard({
+    isActive: !!user && !isProctoringInitOpen,
+    maxViolations: 3,
+    onViolation: (violation) => {
+      addToast(
+        '⚠️ Anti-Cheat Warning',
+        `${violation.title}: ${violation.description}`,
+        'error'
+      );
+    },
+  });
 
   const handlePaletteChange = (newPalette: ColorPalette, label: string) => {
     setPalette(newPalette);
@@ -53,6 +90,19 @@ export function App() {
       addToast(`${next === 'light' ? '☀️ Light' : '🌙 Dark'} Mode Activated`, `Switched interface to ${next} theme`, 'info');
       return next;
     });
+  };
+
+  // Helper when login succeeds: triggers camera/mic and proctoring initialization
+  const onLoginSuccess = async (loggedInUser: UserProfile) => {
+    setUser(loggedInUser);
+    setIsProctoringInitOpen(true);
+    addToast('Activating Hardware', 'Requesting camera and microphone for proctored evaluation...', 'info');
+    // Prompt/activate camera and microphone immediately upon login
+    try {
+      await requestMedia();
+    } catch {
+      // Handled in media hook
+    }
   };
 
   // Sign In Handler
@@ -76,7 +126,7 @@ export function App() {
           targetRole: data.email.includes('recruiter') ? 'Senior Tech Recruiter' : 'Senior Staff Software Engineer',
           memberSince: 'March 2026',
         };
-        setUser(loggedUser);
+        onLoginSuccess(loggedUser);
         addToast('Welcome back!', `Signed in successfully as ${loggedUser.name}`, 'success');
       }
     }, 1100);
@@ -97,7 +147,7 @@ export function App() {
         targetRole: data.role === 'candidate' ? 'Full Stack AI Engineer' : data.role === 'recruiter' ? 'Talent Lead' : 'Engineering Manager',
         memberSince: 'September 2026',
       };
-      setUser(newUser);
+      onLoginSuccess(newUser);
       addToast('Account Created!', `Welcome to InterviewIQ, ${newUser.name}!`, 'success');
     }, 1300);
   };
@@ -117,7 +167,7 @@ export function App() {
         targetRole: 'Senior Cloud & ML Engineer',
         memberSince: 'September 2026',
       };
-      setUser(socialUser);
+      onLoginSuccess(socialUser);
       addToast(`${provider} Authorized`, `Signed in via ${provider} Single Sign-On`, 'success');
     }, 900);
   };
@@ -140,14 +190,19 @@ export function App() {
       targetRole: 'VP of Engineering & Systems',
       memberSince: 'January 2026',
     };
-    setUser(twoFactorUser);
+    onLoginSuccess(twoFactorUser);
     addToast('Identity Verified!', `2FA Token (${code}) authenticated successfully.`, 'success');
   };
 
   // Sign out
   const handleSignOut = () => {
+    stopMedia();
+    resetViolations();
+    exitFullscreen();
+    setIsProctoringInitOpen(false);
+    setIsAuditModalOpen(false);
     setUser(null);
-    addToast('Signed out', 'You have been safely signed out of your workspace.', 'info');
+    addToast('Signed out', 'Camera & Microphone stopped. You have safely signed out.', 'info');
   };
 
   // Card Mouse Move for radial glow effect
@@ -191,6 +246,57 @@ export function App() {
         }}
       />
 
+      {/* Proctoring Hardware Calibration Modal on Login */}
+      {user && (
+        <ProctoringInitModal
+          isOpen={isProctoringInitOpen}
+          userName={user.name}
+          mediaState={mediaState}
+          onRequestMedia={requestMedia}
+          onRequestFullscreen={requestFullscreen}
+          onEnterDashboard={() => {
+            setIsProctoringInitOpen(false);
+            addToast('Proctored Mode Engaged', 'Anti-cheat monitoring and tab restrictions are active.', 'success');
+          }}
+        />
+      )}
+
+      {/* Floating PiP Webcam & Mic HUD (Always available during logged-in proctored session) */}
+      {user && !isProctoringInitOpen && (
+        <ProctoringFloatingHud
+          mediaState={mediaState}
+          guardState={guardState}
+          onToggleCamera={toggleCamera}
+          onToggleMic={toggleMic}
+          onRequestFullscreen={requestFullscreen}
+          onOpenAuditLog={() => setIsAuditModalOpen(true)}
+        />
+      )}
+
+      {/* Strict Tab-Switch & Focus Loss Alert Modal */}
+      {user && (
+        <ProctoringWarningModal
+          alert={guardState.currentAlert}
+          violationCount={guardState.violationCount}
+          maxViolations={guardState.maxViolations}
+          onDismiss={dismissAlert}
+          onRequestFullscreen={requestFullscreen}
+        />
+      )}
+
+      {/* Security Telemetry & Violation Audit Modal */}
+      {user && (
+        <SecurityAuditModal
+          isOpen={isAuditModalOpen}
+          onClose={() => setIsAuditModalOpen(false)}
+          violations={guardState.violations}
+          onResetViolations={resetViolations}
+          isFullscreen={guardState.isFullscreen}
+          hasCamera={mediaState.hasCamera}
+          hasMic={mediaState.hasMic}
+        />
+      )}
+
       {/* Main App Container */}
       <main className={`main-viewport ${user ? 'dashboard-mode' : ''}`}>
         {user ? (
@@ -203,6 +309,11 @@ export function App() {
             onToggleMode={toggleThemeMode}
             onSignOut={handleSignOut}
             onNotify={addToast}
+            mediaState={mediaState}
+            guardState={guardState}
+            onToggleCamera={toggleCamera}
+            onToggleMic={toggleMic}
+            onOpenAuditLog={() => setIsAuditModalOpen(true)}
           />
         ) : (
           /* Split-screen Dual Layout Auth Portal */
